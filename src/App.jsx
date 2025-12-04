@@ -179,6 +179,20 @@ const uploadStory = async (file) => {
 
   setUploadingStory(false);
 };
+const [stories, setStories] = useState([]);
+
+useEffect(() => {
+  const q = query(collection(db, "stories"));
+
+  return onSnapshot(q, (snapshot) => {
+    const allStories = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter((s) => s.expireAt > Date.now()); // auto-expire
+
+    setStories(allStories);
+  });
+}, []);
+
 
 // 2. Logo Component
 const LooplyLogo = ({ size = "md", animated = false }) => {
@@ -661,11 +675,14 @@ function App() {
 
       {/* Main Content Area */}
       <div className="pt-20 max-w-lg mx-auto min-h-screen">
-        {view === 'home' && (
+       {view === 'home' && (
   <div className="pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
     {/* Stories */}
-    <Stories />
+    <Stories
+      stories={stories} 
+      onCreate={() => setShowStoryCreator(true)}
+    />
 
     {/* Feed with Ads */}
     <div className="space-y-2 mt-4">
@@ -682,14 +699,16 @@ function App() {
       ) : (
         posts.map((post, index) => (
           <React.Fragment key={post.id}>
+            
             <PostCard
               post={post}
               currentUserId={user?.uid}
               onLike={handleLike}
             />
 
-            {/* Insert Google Ad every 3 posts */}
+            {/* Insert Google Ad every 3 feed posts */}
             {(index + 1) % 3 === 0 && <GoogleAd />}
+          
           </React.Fragment>
         ))
       )}
@@ -697,6 +716,7 @@ function App() {
 
   </div>
 )}
+
 
 
 
@@ -794,5 +814,13 @@ const NavBtn = ({ icon: Icon, active, onClick }) => (
     <Icon size={22} strokeWidth={active ? 2.5 : 2} />
   </button>
 );
+{showStoryCreator && (
+  <CreateStory
+    onClose={() => setShowStoryCreator(false)}
+    onUpload={uploadStory}
+    uploading={uploadingStory}
+  />
+)}
+
 
 export default App;
