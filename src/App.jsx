@@ -783,7 +783,7 @@ const handlePost = async (newPostData) => {
             </div>
         )}
 
-      </div>
+
 
       {/* Floating Action Button (Create) */}
       <div className="fixed bottom-24 right-6 z-30">
