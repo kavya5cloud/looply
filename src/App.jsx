@@ -587,36 +587,47 @@ function App() {
   }, [view]);
 
   // 3. CREATE POST ACTION
-  const handlePost = async (newPostData) => {
-    if (!user) return;
-    setIsPosting(true);
+  // 3. CREATE POST ACTION
+const handlePost = async (newPostData) => {
+  if (!user) return;
+  setIsPosting(true);
 
-    try {
-      // Simplified Path
-      await addDoc(collection(db, 'posts'), {
-        user: {
-            id: user.uid,
-            name: MOCK_PROFILE.name,
-            handle: MOCK_PROFILE.handle,
-            avatar: MOCK_PROFILE.avatar
-        },
-        content: newPostData.content,
-        image: newPostData.image,
-        likes: [],
-        comments: 0,
-        shares: 0,
-        earnings: 0.00,
-        createdAt: serverTimestamp(),
-        timestamp: Date.now(), 
-        isAd: false,
-      });
-      setShowCreate(false);
-    } catch (e) {
-      console.error("Error adding post: ", e);
-    } finally {
-        setIsPosting(false);
+  try {
+    let imageURL = null;
+
+    // If image file exists → upload it
+    if (newPostData.file) {
+      imageURL = await uploadImage(
+        newPostData.file,
+        `posts/${user.uid}/${Date.now()}`
+      );
     }
-  };
+
+    await addDoc(collection(db, "posts"), {
+      user: {
+        id: user.uid,
+        name: MOCK_PROFILE.name,
+        handle: MOCK_PROFILE.handle,
+        avatar: MOCK_PROFILE.avatar,
+      },
+      content: newPostData.content,
+      image: imageURL,   // REAL image URL now
+      likes: [],
+      comments: 0,
+      shares: 0,
+      earnings: 0,
+      createdAt: serverTimestamp(),
+      timestamp: Date.now(),
+      isAd: false,
+    });
+
+    setShowCreate(false);
+  } catch (e) {
+    console.error("Error adding post:", e);
+  } finally {
+    setIsPosting(false);
+  }
+};
 
   // 4. LIKE ACTION
   const handleLike = async (postId, isLiked) => {
