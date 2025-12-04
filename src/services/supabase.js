@@ -7,22 +7,24 @@ export const supabase = createClient(
 
 export async function uploadImage(file, path) {
   try {
-    // 1. Upload file
+    // Upload file
     const { error: uploadError } = await supabase.storage
       .from("looply-media")
       .upload(path, file, {
-        upsert: true, // allow replacing same filename
+        upsert: true,
         cacheControl: "3600",
       });
 
     if (uploadError) throw uploadError;
 
-    // 2. Get public URL
+    // Get public URL
     const { data: publicURL } = supabase.storage
       .from("looply-media")
       .getPublicUrl(path);
 
-    if (!publicURL?.publicUrl) throw new Error("Failed to get public URL");
+    if (!publicURL?.publicUrl) {
+      throw new Error("Failed to generate public URL");
+    }
 
     return publicURL.publicUrl;
   } catch (err) {
