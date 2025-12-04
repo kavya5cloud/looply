@@ -1,4 +1,3 @@
-// src/services/supabase.js
 import { createClient } from "@supabase/supabase-js";
 
 export const supabase = createClient(
@@ -6,7 +5,6 @@ export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_KEY
 );
 
-// Upload any image file to bucket
 export const uploadImage = async (file, path) => {
   try {
     const { data, error } = await supabase.storage
@@ -23,9 +21,8 @@ export const uploadImage = async (file, path) => {
       .getPublicUrl(path);
 
     return publicURL.publicUrl;
-
-  } catch (e) {
-    console.error("Supabase Upload Error:", e);
+  } catch (err) {
+    console.error("Supabase Upload Error:", err);
     return null;
   }
 };
