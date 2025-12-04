@@ -476,7 +476,21 @@ function App() {
       </div>
 
       {/* Create Modal */}
-      {showCreate && <CreatePost onPost={handlePost} onCancel={() => setShowCreate(false)} isPosting={isPosting} />}
+     {showCreate && (
+  <CreatePost 
+      onPost={handlePost}
+      onCancel={() => setShowCreate(false)}
+      isPosting={isPosting}
+  />
+)}
+
+{showStoryCreator && (
+  <CreateStory
+    onClose={() => setShowStoryCreator(false)}
+    onUpload={uploadStory}
+    uploading={uploadingStory}
+  />
+)}
 
       {/* Story Creator Modal */}
       {showStoryCreator && <CreateStory onClose={() => setShowStoryCreator(false)} onUpload={uploadStory} uploading={uploadingStory} />}
