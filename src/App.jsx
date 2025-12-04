@@ -1,4 +1,6 @@
 import Stories from "./components/Stories";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Heart, MessageCircle, Share2, Plus, Home, 
@@ -111,6 +113,7 @@ const GoogleAd = ({ format = "auto" }) => {
        script.crossOrigin = "anonymous";
        document.body.appendChild(script);
     }
+    
 
     // Push the ad
     try {
@@ -142,6 +145,39 @@ const GoogleAd = ({ format = "auto" }) => {
       </div>
     </div>
   );
+};
+const storage = getStorage(app);
+
+const [showStoryCreator, setShowStoryCreator] = useState(false);
+const [uploadingStory, setUploadingStory] = useState(false);
+
+const uploadStory = async (file) => {
+  if (!user) return;
+
+  setUploadingStory(true);
+
+  try {
+    const fileRef = ref(storage, `stories/${user.uid}/${Date.now()}.jpg`);
+    await uploadBytes(fileRef, file);
+    const url = await getDownloadURL(fileRef);
+
+    await addDoc(collection(db, "stories"), {
+      uid: user.uid,
+      image: url,
+      createdAt: serverTimestamp(),
+      expireAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+      user: {
+        name: MOCK_PROFILE.name,
+        avatar: MOCK_PROFILE.avatar,
+      },
+    });
+
+    setShowStoryCreator(false);
+  } catch (e) {
+    console.error("Error uploading story:", e);
+  }
+
+  setUploadingStory(false);
 };
 
 // 2. Logo Component
