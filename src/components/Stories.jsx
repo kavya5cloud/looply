@@ -1,42 +1,36 @@
-import { useEffect, useState } from "react";
-import { auth } from "../firebase";
-import { getUserProfile } from "../services/user";
+import React from "react";
+import { Plus } from "lucide-react";
 
 export default function Stories() {
-  const [users, setUsers] = useState([]);
-
-  // TEMP – static users for UI
-  useEffect(() => {
-    setUsers([
-      { id: 1, name: "User 1", pic: "/default-avatar.png" },
-      { id: 2, name: "User 2", pic: "/default-avatar.png" },
-      { id: 3, name: "User 3", pic: "/default-avatar.png" },
-      { id: 4, name: "User 4", pic: "/default-avatar.png" },
-    ]);
-  }, []);
-
   return (
-    <div className="flex gap-6 px-4 py-4 items-center">
-      {/* NEW LOOP */}
-      <div className="flex flex-col items-center cursor-pointer">
-        <div className="w-16 h-16 border-2 border-dashed border-purple-400 rounded-full flex items-center justify-center text-3xl text-purple-600">
-          +
+    <div className="flex gap-4 overflow-x-auto px-4 pb-4 no-scrollbar">
+      
+      {/* New Loop */}
+      <div
+        className="flex flex-col items-center gap-1 cursor-pointer"
+      >
+        <div className="w-16 h-16 rounded-full border-2 border-dashed border-indigo-300 flex items-center justify-center bg-white text-indigo-500">
+          <Plus size={24} />
         </div>
-        <p className="text-xs mt-1 text-gray-500">New Loop</p>
+        <span className="text-xs font-medium text-slate-600">New Loop</span>
       </div>
 
-      {/* USER STORIES */}
-      {users.map((u) => (
-        <div key={u.id} className="flex flex-col items-center">
-          <div className="w-16 h-16 rounded-full border-4 border-purple-300 p-1">
-            <img
-              src={u.pic}
-              className="w-full h-full rounded-full object-cover"
-            />
+      {/* Mock Story Users */}
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="flex flex-col items-center gap-1">
+          <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-indigo-500 to-pink-500">
+            <div className="w-full h-full rounded-full border-2 border-white overflow-hidden">
+              <img
+                src={`https://api.dicebear.com/7.x/notionists/svg?seed=${i}`}
+                className="w-full h-full bg-white"
+                alt={`User ${i}`}
+              />
+            </div>
           </div>
-          <p className="text-xs mt-1 text-gray-500">{u.name}</p>
+          <span className="text-xs font-medium text-slate-600">User {i}</span>
         </div>
       ))}
+
     </div>
   );
 }
