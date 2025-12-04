@@ -13,7 +13,8 @@
     "firebase": "^10.7.1",
     "lucide-react": "^0.309.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "@supabase/supabase-js": "^2.43.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
