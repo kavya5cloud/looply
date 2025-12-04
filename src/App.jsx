@@ -1,3 +1,4 @@
+import Stories from "./components/Stories";
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Heart, MessageCircle, Share2, Plus, Home, 
@@ -624,28 +625,44 @@ function App() {
 
       {/* Main Content Area */}
       <div className="pt-20 max-w-lg mx-auto min-h-screen">
-        
         {view === 'home' && (
-          <div className="pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500">
-             {/* Stories/Status Bar */}
-             <div className="flex gap-4 overflow-x-auto px-4 pb-4 no-scrollbar">
-                <div className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => setShowCreate(true)}>
-                    <div className="w-16 h-16 rounded-full border-2 border-dashed border-indigo-300 flex items-center justify-center bg-white text-indigo-500">
-                        <Plus size={24} />
-                    </div>
-                    <span className="text-xs font-medium text-slate-600">New Loop</span>
-                </div>
-                {[1,2,3,4].map(i => (
-                    <div key={i} className="flex flex-col items-center gap-1">
-                        <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-indigo-500 to-pink-500">
-                            <div className="w-full h-full rounded-full border-2 border-white overflow-hidden">
-                                <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${i}`} className="w-full h-full bg-white" />
-                            </div>
-                        </div>
-                        <span className="text-xs font-medium text-slate-600">User {i}</span>
-                    </div>
-                ))}
-             </div>
+  <div className="pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+    {/* Stories */}
+    <Stories />
+
+    {/* Feed with Ads */}
+    <div className="space-y-2 mt-4">
+      {loadingPosts ? (
+        <div className="flex justify-center p-8">
+          <Loader2 className="animate-spin text-indigo-500" />
+        </div>
+      ) : posts.length === 0 ? (
+        <PostCard
+          post={ONBOARDING_POST}
+          currentUserId={user?.uid}
+          onLike={() => {}}
+        />
+      ) : (
+        posts.map((post, index) => (
+          <React.Fragment key={post.id}>
+            <PostCard
+              post={post}
+              currentUserId={user?.uid}
+              onLike={handleLike}
+            />
+
+            {/* Insert Google Ad every 3 posts */}
+            {(index + 1) % 3 === 0 && <GoogleAd />}
+          </React.Fragment>
+        ))
+      )}
+    </div>
+
+  </div>
+)}
+
+
 
              {/* Feed with Mixed Ads */}
              <div className="space-y-2">
